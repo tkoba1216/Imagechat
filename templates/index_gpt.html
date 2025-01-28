@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>リアルタイムチャット</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Socket.io のセットアップ
+            const socket = io();
+
+            const fileInput = document.getElementById("file-input");
+            const messageInput = document.getElementById("message-input");
+            const messageButton = document.getElementById("send-message");
+            const messagesList = document.getElementById("messages");
+            const canvas = document.getElementById("canvas");
+
+            // 受け取ったメッセージと画像を描画する関数
+            const appendMessage = (message) => {
+            const li = document.createElement("li");
+            const img = document.createElement("img");
+            img.src = "data:image/jpeg;base64," + message.image_data;  // 画像データをセット
+            img.style.maxWidth = "200px";  // 画像の最大サイズを設定（任意）
+            img.style.height = "auto";    // アスペクト比を保つ
+
+            li.appendChild(img);
+            li.appendChild(document.createTextNode(message.message));  // メッセージを追加
+            messagesList.appendChild(li);
+        };
+
+            // サーバとの接続確立時にメッセージをロード
+            socket.on("connect", () => socket.emit("load messages"));
+
+            // サーバーから全メッセージを受信
+            socket.on("load all messages", (messages) => {
+                messagesList.innerHTML = "";
+                messages.forEach(appendMessage);
+            });
+
+            // メッセージ送信処理
+            messageButton.addEventListener("click", () => {
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            const image = new Image();
+
+            reader.onload = function (event) {
+                image.onload = function () {
+                    // Canvas準備
+                    const ctx = canvas.getContext("2d");
+                    const max_size = 400;
+                    const scale = image.width > image.height ? max_size / image.width : max_size / image.height;
+
+                    canvas.width = image.width * scale;
+                    canvas.height = image.height * scale;
+
+                    // 画像をリサイズ
+                    ctx.drawImage(image, 0, 0, canvas.width, canvas.height);
+
+                    // 画像データをBase64に変換
+                    const imageData = canvas.toDataURL("image/jpeg");
+
+                    // サーバーへ送信
+                    socket.emit("send message", {
+                        message: messageInput.value,
+                        image_name: file.name,
+                        image_data: imageData,
+                    });
+
+                    messageInput.value = "";
+                };
+
+                image.src = event.target.result;
+            };
+
+            if (file) {
+                reader.readAsDataURL(file);  // ファイルをBase64として読み込む
+            } else {
+                alert("画像を選択してください！");
+            }
+
+            return false;
+        });
+    </script>
+</head>
+<body>
+    <h1>リアルタイムチャット</h1>
+    <ul id="messages"></ul>
+    <input type="text" id="message-input" placeholder="メッセージを入力">
+    <input type="file" id = "file-input">
+    <button id="send-message">送信</button>
+    <canvas id = "canvas" style="display: none;"></canvas>
+</body>
+</html>
