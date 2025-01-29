@@ -1,0 +1,112 @@
+/* 全体を中央揃え */
+body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    font-family: 'Yu Mincho', serif; /* 和風なフォント */
+    background-color: #f5f5dc; /* 生成り色（和紙っぽい雰囲気） */
+    margin: 0;
+    padding: 20px;
+}
+
+/* タイトル部分のスタイル */
+h1 {
+    width: 80%;
+    padding: 10px;
+    border-bottom: 2px solid #6b4226; /* 深い茶色 */
+    font-size: 26px;
+    font-weight: bold;
+    color: #5a3d2b; /* 落ち着いた茶色 */
+    background-color: #d9c2a3; /* 優しい和風ベージュ */
+    border-radius: 5px;
+}
+
+/* 投稿一覧のスタイル */
+#messages {
+    list-style: none;
+    padding: 0;
+    width: 60%;
+}
+
+/* 投稿部分の枠 */
+#messages li {
+    border: 1px solid #8f775e; /* 抹茶っぽい渋い色 */
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px 0;
+    background-color: #ede0d4; /* 和紙っぽいベージュ */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1); /* ふんわり影 */
+}
+
+/* 画像のスタイル */
+#messages img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 5px;
+    border: 1px solid #8f775e; /* 和風な枠 */
+}
+
+/* メッセージのテキスト */
+#messages p {
+    margin: 5px 0;
+    color: #4a3d2a; /* 落ち着いた茶色 */
+}
+
+/* いいねボタン */
+#messages button {
+    margin-top: 5px;
+    padding: 5px 10px;
+    border: none;
+    background-color: #6b8e23; /* 落ち着いた緑（抹茶カラー） */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#messages button:hover {
+    background-color: #556b2f; /* 少し濃い抹茶色 */
+}
+
+/* 送信部分の枠 */
+form {
+    width: 60%;
+    padding: 10px;
+    border-top: 2px solid #6b4226;
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #d9c2a3;
+    border-radius: 5px;
+}
+
+/* 入力フィールド */
+input[type="text"], input[type="file"] {
+    width: 80%;
+    padding: 8px;
+    margin: 5px 0;
+    border: 1px solid #8f775e;
+    border-radius: 5px;
+    background-color: #fffaf0; /* やわらかいクリーム色 */
+}
+
+/* 送信ボタン */
+#send-message {
+    padding: 8px 15px;
+    border: none;
+    background-color: #a0522d; /* 赤茶（ほうじ茶のような色） */
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+#send-message:hover {
+    background-color: #8b4513; /* さらに渋めの茶色 */
+}

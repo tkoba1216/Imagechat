@@ -36,7 +36,8 @@ def index():
 #メッセージの読み込み
 @socketio.on("load messages")
 def load_messages():
-    messages = db.images.find().sort("_id",-1).limit(3)
+    #表示の数も決めないとこの場合11番目以降の画像でいいねを押せなくなる。
+    messages = db.images.find().sort("_id",-1).limit(10)
     messages = list(messages)[::-1]
     #メッセージと画像データをリストにして母えす
     messages_return = [

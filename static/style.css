@@ -1,0 +1,188 @@
+/* モダン和風カラーパレット */
+:root {
+    --wa-primary: #435C4E;    /* 深い抹茶色 */
+    --wa-secondary: #D7C4BB;  /* 優しい桜色 */
+    --wa-accent: #A6454C;     /* 控えめな朱色 */
+    --wa-background: #F6F5F1; /* 白練色 */
+    --wa-text: #2C2B2A;      /* 濃墨色 */
+    --wa-border: #E0DCDA;     /* 優しいグレー */
+  }
+  
+  /* ベーススタイル */
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /* より丸みのあるフォントを優先的に使用 */
+    font-family: 'M PLUS Rounded 1c', 'Kosugi Maru', 'Hiragino Maru Gothic ProN', 'Meiryo UI', sans-serif;
+    background-color: var(--wa-background);
+    color: var(--wa-text);
+    margin: 0;
+    padding: 20px;
+    line-height: 1.6;
+  }
+  
+  /* タイトル */
+  h1 {
+    width: 80%;
+    padding: 20px 10px;
+    font-size: 28px;
+    /* タイトルはさらに丸みのある特別なフォントを使用 */
+    font-family: 'Zen Maru Gothic', 'M PLUS Rounded 1c', 'Hiragino Maru Gothic ProN', sans-serif;
+    font-weight: 500;
+    color: var(--wa-primary);
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    margin-bottom: 30px;
+    position: relative;
+  }
+  
+  h1::after {
+    content: '';
+    position: absolute;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background-color: var(--wa-accent);
+    border-radius: 2px;
+  }
+  
+  /* メッセージリスト */
+  #messages {
+    list-style: none;
+    padding: 0;
+    width: 60%;
+    max-width: 800px;
+  }
+  
+  /* メッセージカード */
+  #messages li {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  #messages li:hover {
+    transform: translateY(-2px);
+  }
+  
+  /* 画像スタイル */
+  #messages img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+  }
+  
+  /* メッセージテキスト */
+  #messages p {
+    margin: 10px 0;
+    color: var(--wa-text);
+    font-size: 15px;
+    line-height: 1.6;
+    width: 100%;
+    text-align: center;
+    /* メッセージテキストも丸みのあるフォントを使用 */
+    font-family: 'M PLUS Rounded 1c', 'Kosugi Maru', 'Hiragino Maru Gothic ProN', sans-serif;
+  }
+  
+  
+  /* いいねボタン */
+  #messages button {
+    padding: 8px 16px;
+    background-color: var(--wa-primary);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+  
+  #messages button:hover {
+    background-color: #374B3F;
+    transform: translateY(-1px);
+  }
+  
+  /* 投稿フォーム */
+  form {
+    width: 60%;
+    max-width: 800px;
+    padding: 20px;
+    margin-top: 30px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+  
+  /* 入力フィールド */
+  input[type="text"], input[type="file"] {
+    width: 90%;
+    padding: 12px;
+    border: 1px solid var(--wa-border);
+    border-radius: 8px;
+    background-color: var(--wa-background);
+    transition: all 0.2s ease;
+    font-size: 14px;
+  }
+  
+  input[type="text"]:focus, input[type="file"]:focus {
+    outline: none;
+    border-color: var(--wa-primary);
+    box-shadow: 0 0 0 2px rgba(67, 92, 78, 0.1);
+  }
+  
+  /* 送信ボタン */
+  #send-message {
+    padding: 12px 24px;
+    background-color: var(--wa-accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+  }
+  
+  #send-message:hover {
+    background-color: #8B383E;
+    transform: translateY(-1px);
+  }
+  
+  /* レスポンシブ対応 */
+  @media (max-width: 768px) {
+    h1, #messages, form {
+      width: 90%;
+    }
+    
+    input[type="text"], input[type="file"] {
+      width: 95%;
+    }
+  }
+  
+  /* アニメーション */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  #messages li {
+    animation: fadeIn 0.3s ease forwards;
+  }

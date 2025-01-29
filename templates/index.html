@@ -2,7 +2,8 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>リアルタイムチャット</title>
+    <title>Ocha.ru</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -108,9 +109,9 @@
     </script>
 </head>
 <body>
-    <h1>リアルタイムチャット</h1>
+    <h1>Ocha.ru</h1>
     <ul id="messages"></ul>
-    <input type="text" id="message-input" placeholder="メッセージを入力">
+    <input type="text" id="message-input" placeholder="のんびりひとこと🍵">
     <input type="file" id = "file-input">
     <button id="send-message">送信</button>
     <canvas id = "canvas" style="display: none;"></canvas>
