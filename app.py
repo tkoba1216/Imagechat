@@ -7,6 +7,7 @@ from pymongo import MongoClient
 import base64
 import gridfs
 import bson
+from bson.objectid import ObjectId
 
 import os
 
@@ -38,9 +39,15 @@ def load_messages():
     messages = db.images.find().sort("_id",-1).limit(3)
     messages = list(messages)[::-1]
     #メッセージと画像データをリストにして母えす
-    messages_return = [{"message":message["message"],
-                        "image_data":get_image_data(message["image_id"])} 
-                       for message in messages]
+    messages_return = [
+        {
+            "message_id": str(message["_id"]),
+            "message": message["message"],
+            "image_data": get_image_data(message["image_id"]),
+            "likes": message.get("likes", 0)  # いいね数がない場合は0
+        } 
+        for message in messages
+    ]
     #メッセージをクライアントへ送信
     emit("load all messages",messages_return)
 
@@ -48,6 +55,15 @@ def get_image_data(image_id):
     image_file = fs.get(image_id).read()
     image_base64 = base64.b64encode(image_file)
     return image_base64.decode("utf-8")
+
+# いいね処理
+@socketio.on("like message")
+def like_message(data):
+    message_id = data["message_id"]
+    db.images.update_one({"_id": ObjectId(message_id)}, {"$inc": {"likes": 1}})
+    updated_message = db.images.find_one({"_id": ObjectId(message_id)})
+    emit("update likes", {"message_id": message_id, "likes": updated_message["likes"]}, broadcast=True)
+
 
 #メッセージと画像の登録
 @socketio.on("send message")
@@ -62,14 +78,15 @@ def send_message(data):
     
     #MongoDBに画像を保存したGridFSのファイルIDとテキストを保存
     image_record = {
-        "image_name":image_name,
-        "image_id":image_id,
-        "message":message
+        "image_name": image_name,
+        "image_id": image_id,
+        "message": message,
+        "likes": 0  # いいね数を0で初期化
     }
     db.images.insert_one(image_record)
     
     #メッセージと画像をクライアントへ送信
-    emit("load one message",{"message":message,"image_data":get_image_data(image_id)},broadcast=True)
+    emit("load one message",{"message":message,"image_data":get_image_data(image_id),"likes":0},broadcast=True)
     #messages_collection.insert_one({"message":message})
     #メッセージをクライアントへ送信
     #emit("load one message",message,broadcast=True)

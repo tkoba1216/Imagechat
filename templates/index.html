@@ -16,14 +16,36 @@
             const canvas = document.getElementById("canvas");
 
             // 受け取ったメッセージと画像を描画する関数
-            const appendMessage = (message) => {
+            //const appendMessage = (message) => {
                 //const li = document.createElement("li");
                 //li.textContent = message;
+                //let li = document.createElement("li");
+                //let img = document.createElement("img");
+                //img.src = "data:image/jpeg;base64,"+message["image_data"];
+                //li.appendChild(img);
+                //li.appendChild(document.createTextNode(message["message"]));
+               // messagesList.appendChild(li);
+            //};
+            // メッセージを描画する関数
+            const appendMessage = (message) => {
                 let li = document.createElement("li");
+
                 let img = document.createElement("img");
-                img.src = "data:image/jpeg;base64,"+message["image_data"];
+                img.src = "data:image/jpeg;base64," + message.image_data;
+                img.style.width = "200px";
+
+                let text = document.createElement("p");
+                text.textContent = message.message;
+
+                let likeButton = document.createElement("button");
+                likeButton.textContent = "👍 いいね (" + message.likes + ")";
+                likeButton.onclick = () => socket.emit("like message", { message_id: message.message_id });
+
+                likeButton.setAttribute("data-message-id", message.message_id);
+
                 li.appendChild(img);
-                li.appendChild(document.createTextNode(message["message"]));
+                li.appendChild(text);
+                li.appendChild(likeButton);
                 messagesList.appendChild(li);
             };
 
@@ -34,6 +56,12 @@
             socket.on("load all messages", (messages) => {
                 messagesList.innerHTML = "";
                 messages.forEach(appendMessage);
+            });
+
+            // いいねの更新
+            socket.on("update likes", (data) => {
+                let buttons = document.querySelectorAll("button[data-message-id='" + data.message_id + "']");
+                buttons.forEach(btn => btn.textContent = "👍 いいね (" + data.likes + ")");
             });
 
             // メッセージ送信処理
