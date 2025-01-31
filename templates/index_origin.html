@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <title>Ocha.ru</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.4.1/socket.io.min.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            // Socket.io のセットアップ
+            const socket = io();
+
+            const fileInput = document.getElementById("file-input");
+            const messageInput = document.getElementById("message-input");
+            const emojiSelect = document.getElementById("emoji-select");
+            const messageButton = document.getElementById("send-message");
+            const messagesList = document.getElementById("messages");
+            const canvas = document.getElementById("canvas");
+
+            // 受け取ったメッセージと画像を描画する関数
+            //const appendMessage = (message) => {
+                //const li = document.createElement("li");
+                //li.textContent = message;
+                //let li = document.createElement("li");
+                //let img = document.createElement("img");
+                //img.src = "data:image/jpeg;base64,"+message["image_data"];
+                //li.appendChild(img);
+                //li.appendChild(document.createTextNode(message["message"]));
+               // messagesList.appendChild(li);
+            //};
+            // メッセージを描画する関数
+            const appendMessage = (message) => {
+                let li = document.createElement("li");
+
+                let img = document.createElement("img");
+                img.src = "data:image/jpeg;base64," + message.image_data;
+                img.style.width = "200px";
+
+                let text = document.createElement("p");
+                text.textContent = message.emoji ; // 絵文字だけを表示する
+                //text.textContent = message.emoji + " " + message.message; // 絵文字付きメッセージ
+                
+
+                let likeButton = document.createElement("button");
+                likeButton.textContent = "👍 いいね (" + message.likes + ")";
+                likeButton.onclick = () => socket.emit("like message", { message_id: message.message_id });
+
+                likeButton.setAttribute("data-message-id", message.message_id);
+
+                li.appendChild(img);
+                li.appendChild(text);
+                li.appendChild(likeButton);
+                messagesList.appendChild(li);
+            };
+
+            // サーバとの接続確立時にメッセージをロード
+            socket.on("connect", () => socket.emit("load messages"));
+
+            // サーバーから全メッセージを受信
+            socket.on("load all messages", (messages) => {
+                messagesList.innerHTML = "";
+                messages.forEach(appendMessage);
+            });
+
+            // いいねの更新
+            socket.on("update likes", (data) => {
+                let buttons = document.querySelectorAll("button[data-message-id='" + data.message_id + "']");
+                buttons.forEach(btn => btn.textContent = "👍 いいね (" + data.likes + ")");
+            });
+
+            // メッセージ送信処理
+            messageButton.addEventListener("click", () => {
+                //選択されたファイルを読み込む
+                var file = fileInput.files[0];
+                var reader = new FileReader();
+                var image = new Image();
+                let selectedEmoji = emojiSelect.value; // 選択された顔文字
+
+                reader.onload = function(event){
+                    image.onload = function(){
+                        //Cancasを使うための準備
+                        var ctx = canvas.getContext("2d");
+                        //リサイズ後の上限サイズ
+                        var max_size = 400
+                        //リサイズ後のサイズを計算
+                        var scale = image.width > image.height ? max_size / image.width:max_size / image.height;
+                        canvas.width = image.width*scale;
+                        canvas.height = image.height*scale;
+                        //画像をCanvasでリサイズ
+                        ctx.drawImage(image,0,0,canvas.width,canvas.height);
+
+                        var imageData = canvas.toDataURL("image/jpeg");
+                        // クライアントからサーバへ画像はエンコードして送ってる
+                        socket.emit("send message",{
+                            message:messageInput.value,
+                            emoji:selectedEmoji,
+                            image_name:file.name,
+                            image_data:imageData
+                        });
+                        messageInput.value = "";
+
+                    };
+                    image.src = event.target.result;
+
+                };
+                reader.readAsDataURL(file);
+
+                return false;
+            });
+
+            // サーバーから単一メッセージを受信
+            socket.on("load one message", appendMessage);
+        });
+    </script>
+</head>
+<body>
+    <h1>Ocha.ru</h1>
+    <ul id="messages"></ul>
+    <!-- 顔文字選択 -->
+    <select id="emoji-select">
+        <option value="☺️">☺️</option>
+        <option value="😭">😭</option>
+        <option value="🥱">🥱</option>
+    </select>
+    <input type="text" id="message-input" placeholder="思うままに🍵">
+    <input type="file" id = "file-input">
+    <button id="send-message">送信</button>
+    <canvas id = "canvas" style="display: none;"></canvas>
+</body>
+</html>
