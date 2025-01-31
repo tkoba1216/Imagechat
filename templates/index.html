@@ -12,6 +12,7 @@
 
             const fileInput = document.getElementById("file-input");
             const messageInput = document.getElementById("message-input");
+            const emojiSelect = document.getElementById("emoji-select");
             const messageButton = document.getElementById("send-message");
             const messagesList = document.getElementById("messages");
             const canvas = document.getElementById("canvas");
@@ -36,7 +37,9 @@
                 img.style.width = "200px";
 
                 let text = document.createElement("p");
-                text.textContent = message.message;
+                text.textContent = message.emoji ; // 絵文字だけを表示する
+                //text.textContent = message.emoji + " " + message.message; // 絵文字付きメッセージ
+                
 
                 let likeButton = document.createElement("button");
                 likeButton.textContent = "👍 いいね (" + message.likes + ")";
@@ -71,6 +74,7 @@
                 var file = fileInput.files[0];
                 var reader = new FileReader();
                 var image = new Image();
+                let selectedEmoji = emojiSelect.value; // 選択された顔文字
 
                 reader.onload = function(event){
                     image.onload = function(){
@@ -89,6 +93,7 @@
                         // クライアントからサーバへ画像はエンコードして送ってる
                         socket.emit("send message",{
                             message:messageInput.value,
+                            emoji:selectedEmoji,
                             image_name:file.name,
                             image_data:imageData
                         });
@@ -111,7 +116,13 @@
 <body>
     <h1>Ocha.ru</h1>
     <ul id="messages"></ul>
-    <input type="text" id="message-input" placeholder="のんびりひとこと🍵">
+    <!-- 顔文字選択 -->
+    <select id="emoji-select">
+        <option value="☺️">☺️</option>
+        <option value="😭">😭</option>
+        <option value="🥱">🥱</option>
+    </select>
+    <input type="text" id="message-input" placeholder="思うままに🍵">
     <input type="file" id = "file-input">
     <button id="send-message">送信</button>
     <canvas id = "canvas" style="display: none;"></canvas>

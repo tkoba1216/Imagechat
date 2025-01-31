@@ -22,7 +22,7 @@ socketio = SocketIO(app)
 #mongo_uri = os.environ.get("MONGO_URI")
 mongo_uri = ""
 client = MongoClient(mongo_uri)
-db = client["SNS_IMG"]
+db = client["SNS_TEST"]
 #messages_collection = db["messages"]
 
 #GridFSのセットアップ
@@ -44,6 +44,7 @@ def load_messages():
         {
             "message_id": str(message["_id"]),
             "message": message["message"],
+            "emoji": message.get("emoji", "😄"),
             "image_data": get_image_data(message["image_id"]),
             "likes": message.get("likes", 0)  # いいね数がない場合は0
         } 
@@ -72,6 +73,7 @@ def send_message(data):
     message = data["message"]
     image_data = data["image_data"]
     image_name = data["image_name"]
+    emoji = data.get("emoji", "😄")
     
     #bs64エンコードされているデータをデコードしてFridFSに保存
     image_bytes = base64.b64decode(image_data.split(",")[1])
@@ -82,12 +84,16 @@ def send_message(data):
         "image_name": image_name,
         "image_id": image_id,
         "message": message,
+        "emoji":emoji,
         "likes": 0  # いいね数を0で初期化
     }
     db.images.insert_one(image_record)
     
     #メッセージと画像をクライアントへ送信
-    emit("load one message",{"message":message,"image_data":get_image_data(image_id),"likes":0},broadcast=True)
+    emit("load one message",{
+        "message":message,
+        "emoji":emoji,
+        "image_data":get_image_data(image_id),"likes":0},broadcast=True)
     #messages_collection.insert_one({"message":message})
     #メッセージをクライアントへ送信
     #emit("load one message",message,broadcast=True)
