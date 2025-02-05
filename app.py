@@ -21,6 +21,7 @@ socketio = SocketIO(app)
 #load_dotenv()
 #mongo_uri = os.environ.get("MONGO_URI")
 mongo_uri = ""
+
 client = MongoClient(mongo_uri)
 db = client["SNS_TEST"]
 #messages_collection = db["messages"]
