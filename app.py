@@ -22,6 +22,7 @@ socketio = SocketIO(app)
 #print("os test")
 #os.environ['MONGO_URI']
 #本番設定
+print(f"MONGO_URI: {os.getenv('MONGO_URI')}")
 mongo_uri = os.environ['MONGO_URI']
 #print(mongo_uri)
 #print(mongo_uri)
