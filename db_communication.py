@@ -1,11 +1,17 @@
+#from dotenv import load_dotenv
 from pymongo import MongoClient
 from bson.objectid import ObjectId
+import os 
 
+#load_dotenv() 
+
+#mongo_uri = os.environ["URI"]
+#print(mongo_uri)
 # MongoDBに接続
 def test_db_connection_receive():
     mongo_uri = ""  # 実際のMongoDB URIに置き換える
     client = MongoClient(mongo_uri)
-    db = client["SNS_IMG"]
+    db = client["SNS_TEST"]
     
     # 適当なデータを取得
     sample_data = db.images.find_one()
