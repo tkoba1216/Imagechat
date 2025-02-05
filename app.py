@@ -19,8 +19,13 @@ socketio = SocketIO(app)
 
 #MongoDBの接続先設定
 #load_dotenv()
-#mongo_uri = os.environ.get("MONGO_URI")
-mongo_uri = ""
+#print("os test")
+#os.environ['MONGO_URI']
+#本番設定
+mongo_uri = os.environ['MONGO_URI']
+#print(mongo_uri)
+#print(mongo_uri)
+#mongo_uri = ""
 
 client = MongoClient(mongo_uri)
 db = client["SNS_TEST"]
@@ -99,7 +104,12 @@ def send_message(data):
     #メッセージをクライアントへ送信
     #emit("load one message",message,broadcast=True)
     
+# ポート番号の設定（Renderでは環境変数PORTを使用）
+port = int(os.environ.get("PORT", 8080))  # 環境変数PORTが無ければデフォルト8080
+
+#if __name__ == "__main__":
+#app.run(debug=True,host="0.0.0.0", port=port)
 
 if __name__ == "__main__":
     #Socket.ioサーバの起動
-    socketio.run(app,debug=True,port=8000)
+    socketio.run(app,debug=True,host="0.0.0.0",port=port)

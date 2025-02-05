@@ -16,3 +16,4 @@ python-socketio==5.12.1
 setuptools==75.6.0
 simple-websocket==1.1.0
 wsproto==1.2.0
+gunicorn==23.0.0
